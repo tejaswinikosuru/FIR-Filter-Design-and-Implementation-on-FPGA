@@ -1,0 +1,33 @@
+`timescale 1ns / 1ps
+
+module top_bram_fir
+(
+    input clk_in1_0,
+    input reset_0,
+    output [15:0] output_r_0
+);
+
+wire [15:0] bram_data;
+wire [15:0] fir_out;
+
+// BRAM Reader
+bram_reader BRAM
+(
+    .clk(clk_in1_0),
+    .rst(reset_0),
+    .data_out(bram_data)
+);
+
+// FIR IP
+FIR_0 FIR
+(
+    .ap_clk(clk_in1_0),
+    .ap_rst(reset_0),
+    .input_r(bram_data),
+    .output_r(fir_out)
+);
+
+// Output to LEDs
+assign output_r_0 = fir_out;
+
+endmodule
