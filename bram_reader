@@ -1,0 +1,44 @@
+module bram_reader(
+    input clk,
+    input rst,
+    output reg [15:0] data_out
+);
+
+reg [15:0] mem [0:1023];
+reg [9:0] address;
+reg [23:0] counter;   // Enough for counting to 10,000,000
+
+// Load memory file
+initial begin
+    $readmemh("input.mem", mem);
+end
+
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        address  <= 10'd0;
+        counter  <= 24'd0;
+        data_out <= 16'd0;
+    end
+    else
+    begin
+        if (counter == 24'd9999999)
+        begin
+            counter <= 24'd0;
+
+            data_out <= mem[address];
+
+            if (address == 10'd1023)
+                address <= 10'd0;
+            else
+                address <= address + 1;
+        end
+        else
+        begin
+            counter <= counter + 1;
+        end
+    end
+end
+
+endmodule
